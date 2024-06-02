@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -10,7 +9,7 @@ const UserSchema = new Schema({
     gender: { type: String, required: true },
     email: { type: String, required: true },
     mobileNumber: { type: String, required: true },
-    adhaarNumber: { type: String, required: true },
+    adhaarNumber: { type: String, required: true, unique: true },
     district: { type: String, required: true },
     constituency: { type: String, required: true },
     address: { type: String, required: true }

@@ -1,7 +1,6 @@
 import express from "express";
 import User from "../models/user.js";
 
-
 const router = express.Router();
 
 // Register route
@@ -26,7 +25,11 @@ router.post('/', async (req, res) => {
         const savedUser = await newUser.save();
         res.json(savedUser);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        if (err.code === 11000 && err.keyPattern && err.keyPattern.adhaarNumber) {
+            res.status(400).json({ message: 'Aadhaar number is already registered' });
+        } else {
+            res.status(500).json({ message: err.message });
+        }
     }
 });
 
