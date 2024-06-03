@@ -1,6 +1,6 @@
 import User from "../models/user.js"
 
-const userRegister = async (req, res) => {
+export const userRegister = async (req, res) => {
         const { name, fatherName, dob, gender, email, mobileNumber, adhaarNumber, district, constituency, address } = req.body;
     
         // Create a new user
@@ -29,4 +29,13 @@ const userRegister = async (req, res) => {
         }
     };
 
-    export default userRegister
+    export const getAllUsers = async (req, res) => {
+        try {
+          const users = await User.find({});
+          res.status(200).json(users);
+        } catch (error) {
+          res.status(500).json({ message: 'Server error' });
+        }
+      };
+
+    export default { userRegister, getAllUsers }

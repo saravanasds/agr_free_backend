@@ -13,6 +13,6 @@ const UserSchema = new Schema({
     district: { type: String, required: true },
     constituency: { type: String, required: true },
     address: { type: String, required: true }
-});
+}, { timestamps: true });
 
 export default mongoose.model('User', UserSchema);
