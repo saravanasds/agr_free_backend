@@ -12,6 +12,8 @@ const Dashboard = () => {
     district: '',
     constituency: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 20;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -34,16 +36,13 @@ const Dashboard = () => {
       user.constituency.toLowerCase().includes(filter.constituency.toLowerCase())
     );
     setFilteredUsers(filtered);
+    setCurrentPage(1); // Reset to the first page when filter changes
   }, [filter, users]);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return new Date(dateString).toLocaleDateString('en-GB', options).replace(/\//g, '-');
   };
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   const handleRowClick = (user) => {
     setSelectedUser(user);
@@ -57,6 +56,20 @@ const Dashboard = () => {
     const { name, value } = e.target;
     setFilter({ ...filter, [name]: value });
   };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Get current users
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredUsers.length / usersPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="container mx-auto px-4">
@@ -99,7 +112,7 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map(user => (
+            {currentUsers.map(user => (
               <tr key={user._id} className="cursor-pointer" onClick={() => handleRowClick(user)}>
                 <td className="px-4 py-2 border-b">{user.name}</td>
                 <td className="px-4 py-2 border-b">{user.mobileNumber}</td>
@@ -112,6 +125,17 @@ const Dashboard = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-center mt-4">
+        {pageNumbers.map(number => (
+          <button
+            key={number}
+            onClick={() => handlePageChange(number)}
+            className={`px-3 py-1 mx-1 border ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+          >
+            {number}
+          </button>
+        ))}
       </div>
       {selectedUser && <Modal user={selectedUser} onClose={handleCloseModal} />}
     </div>
